@@ -77,7 +77,7 @@ class Calculator:
                     i += 1
                 arr.append(ch)
             elif ch != ' ':
-                raise ValueError("Incorrect expression")
+                raise ValueError(f"Incorrect expression: pos = {i}")
             i += 1
 
         if brackets != 0:
@@ -115,7 +115,7 @@ class Calculator:
                     self.__pos += 1
                     numbers.append(self.__parse_expression())
                 else:
-                    raise ValueError("Incorrect expression")
+                    raise ValueError(f"Incorrect expression: pos = {self.__pos}")
 
             elif t == ')':
                 while len(ops) > 0:
@@ -159,3 +159,4 @@ if __name__ == '__main__':
                  '- 5 * 6 + (6 - 7 * (10 + (8 / (6 '
                  '- - 4 )  )   )- 8) '
                  '   ))  '))
+    print(c.eval('2 - 3 + 4'))
