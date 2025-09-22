@@ -11,23 +11,40 @@ class BracketsError(Exception):
 
 
 class Calculator:
-    def __init__(self, expression):
-        self.stack = deque()
-        self.expression = expression
-        self.evaluate = {'+': lambda x, y: x + y,
+
+    __expression: str
+    __tokens: List[str]
+    __pos: int
+
+    def __init__(self):
+        self.__evaluate: dict = {'+': lambda x, y: x + y,
                          '-': lambda x, y: x - y,
                          '*': lambda x, y: x * y,
                          '/': lambda x, y: x / y,
                          '//': lambda x, y: x // y,
-                         '%': lambda x, y: x % y
-                         }
+                         '%': lambda x, y: x % y,
+                                 }
+        self.__priorities: dict = {'+': 1,
+                                 '-': 1,
+                                 '*': 2,
+                                 '/': 2,
+                                 '//': 2,
+                                 '%': 2,
+                                   }
 
-        self.tokens = self.tokenize()
+
+    def eval(self, expression: str) -> float:
+        self.__expression: str = expression
+        self.__tokens: List[str] = self.__tokenize()
+        self.__pos: int = 0
+
+        return self.__parse_expression()
 
 
-    def parse_number(self, start: int, length: int) -> Tuple[str, int]:
+
+    def __parse_number(self, start: int, length: int) -> Tuple[str, int]:
             i = start
-            exp = self.expression
+            exp = self.__expression
             while i < length and exp[i].isdigit():
                 if exp[i].isdigit():
                     i += 1
@@ -37,16 +54,16 @@ class Calculator:
             return exp[start:i], i - 1
 
 
-    def tokenize(self) -> List[str]:
+    def __tokenize(self) -> List[str]:
         arr = []
-        exp = self.expression
+        exp = self.__expression
         length = len(exp)
         i = 0
         brackets = 0
         while i < length:
             ch = exp[i]
             if ch.isdigit():
-                num, i = self.parse_number(i, length)
+                num, i = self.__parse_number(i, length)
                 arr.append(num)
             elif ch == '(':
                 brackets += 1
@@ -54,8 +71,13 @@ class Calculator:
             elif ch == ')':
                 brackets -= 1
                 arr.append(ch)
-            elif ch in self.evaluate.keys():
+            elif self.__evaluate.get(ch):
+                if ch == '/' and i + 1 < length and exp[i + 1] == '/':
+                    ch = '//'
+                    i += 1
                 arr.append(ch)
+            elif ch != ' ':
+                raise ValueError("Incorrect expression")
             i += 1
 
         if brackets != 0:
@@ -64,8 +86,64 @@ class Calculator:
         return arr
 
 
+    def __parse_expression(self):
+        ops: deque = deque()
+        numbers: deque = deque()
+
+        flag_priority_operator: bool = False
+
+        while self.__pos < len(self.__tokens):
+            t = self.__tokens[self.__pos]
+
+            if t.isdigit():
+                numbers.append(float(t))
+
+            elif t == '(':
+                if self.__pos + 1 < len(self.__tokens):
+                    self.__pos += 1
+                    numbers.append(self.__parse_expression())
+                else:
+                    raise ValueError("Incorrect expression")
+
+            elif t == ')':
+                while len(ops) > 0:
+                    n1 = numbers.popleft()
+                    n2 = numbers.popleft()
+                    numbers.appendleft(self.__evaluate[ops.popleft()](n1, n2))
+                return numbers.pop()
+
+            elif op := self.__priorities.get(t, 0):
+                if op == 2:
+                    flag_priority_operator = True
+                ops.append(t)
+                self.__pos += 1
+                continue
+
+            if flag_priority_operator:
+                n2 = numbers.pop()
+                n1 = numbers.pop()
+                op = ops.pop()
+                if op in ('/', '//', '%') and n2 == 0:
+                    raise DivisionByZeroError("Division by zero")
+                numbers.append(self.__evaluate[op](n1, n2))
+                flag_priority_operator = False
+
+            self.__pos += 1
+
+        while len(ops) > 0:
+            n1 = numbers.popleft()
+            n2 = numbers.popleft()
+            numbers.appendleft(self.__evaluate[ops.popleft()](n1, n2))
+
+        return numbers[0]
+
+
+
+
 if __name__ == '__main__':
-    c = Calculator('   1    +   2   *    (  3   '
-                   ' + 4   )')
-    print(c.tokens)
-    # print(c.tokenize())
+    c = Calculator()
+    print(c.eval('( ( 1    +   2   *  '
+                 '  (  3    / (9 *    7 - (98 / 12 -6    )    ) *    4   ) / 7 '
+                 '- 5 * 6 + (6 - 7 * (10 + (8 / (6 '
+                 '- 4 )  )   )- 8) '
+                 '   ))  '))
