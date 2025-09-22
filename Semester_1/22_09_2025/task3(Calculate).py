@@ -91,12 +91,24 @@ class Calculator:
         numbers: deque = deque()
 
         flag_priority_operator: bool = False
+        unary_minus: bool = False
 
         while self.__pos < len(self.__tokens):
             t = self.__tokens[self.__pos]
 
+            if t == '-' and (self.__pos == 0 or
+                             self.__tokens[self.__pos - 1] == '(' or
+                             self.__priorities.get(self.__tokens[self.__pos - 1], 0)):
+                unary_minus = True
+                self.__pos += 1
+                continue
+
             if t.isdigit():
-                numbers.append(float(t))
+                num = float(t)
+                if unary_minus:
+                    num = -num
+                    unary_minus = False
+                numbers.append(num)
 
             elif t == '(':
                 if self.__pos + 1 < len(self.__tokens):
@@ -145,5 +157,5 @@ if __name__ == '__main__':
     print(c.eval('( ( 1    +   2   *  '
                  '  (  3    / (9 *    7 - (98 / 12 -6    )    ) *    4   ) / 7 '
                  '- 5 * 6 + (6 - 7 * (10 + (8 / (6 '
-                 '- 4 )  )   )- 8) '
+                 '- - 4 )  )   )- 8) '
                  '   ))  '))
