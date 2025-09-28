@@ -27,10 +27,7 @@ class Calculator:
         i = start
         exp = self.__expression
         while i < length and exp[i].isdigit():
-            if exp[i].isdigit():
-                i += 1
-            else:
-                break
+            i += 1
 
         return exp[start:i], i - 1
 
