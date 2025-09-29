@@ -25,7 +25,7 @@ def cabinet_caesar(text: str, shift: int, encrypt: bool) -> str:
     else:
         arr_shift = decryption_dict(shift, arr_chars)
 
-    return ''.join([arr_shift.get(ch) for ch in text])
+    return ''.join([arr_shift.get(ch, ch) for ch in text])
 
 
 if __name__ == '__main__':
@@ -33,7 +33,7 @@ if __name__ == '__main__':
           "       Шифр Цезаря      \n"
           "========================\n"
           )
-    text = input("[!] Введите текст: ")
+    text: str = input("[!] Введите текст: ")
     flag_encrypt = input("[!] Введите 1 для шифрования, 0 для дешифрования: ")
 
     if flag_encrypt == '1':
