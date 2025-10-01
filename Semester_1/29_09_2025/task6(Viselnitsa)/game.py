@@ -88,8 +88,9 @@ class Game:
                 case Result.CORRECT:
                     print('[!] Правильная буква!\n')
                 case Result.INCORRECT:
-                    print('[!] Неправильная буква!\n')
+                    print(f'[!] Неправильная буква!\n')
                     print(self.__steps[index_step])
+                    print(f'[!] Ошибок: {index_step + 1}/{len(self.__steps)}')
                     index_step += 1
                 case Result.NO_LETTER:
                     print('[?] В русском алфавите нет такой буквы.\n')
