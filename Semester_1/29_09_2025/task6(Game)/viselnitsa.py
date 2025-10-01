@@ -53,7 +53,7 @@ class Game:
         print('\n')
 
 
-    def _is_win(self):
+    def _is_win(self) -> bool:
         for l in range(len(self._word)):
             if self._letters_used[l] is False:
                 return False
