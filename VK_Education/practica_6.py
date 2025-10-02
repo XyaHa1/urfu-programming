@@ -1,0 +1,8 @@
+s = input()
+old_l = len(s)
+s = (s.replace("!", "")
+ .replace("%", "")
+ .replace("#", "")
+ .replace("@", "").lower())
+new_l = len(s)
+print(old_l - new_l, s, sep="\n")
