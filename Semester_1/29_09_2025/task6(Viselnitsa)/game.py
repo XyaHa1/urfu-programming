@@ -75,7 +75,7 @@ class Game:
             if self.__word != '' and all(ch in self.__letters for ch in self.__word):
                 break
             else:
-                print('[!] Введите слово корректное слово для русского алфавита.\n')
+                print('[!] Введите корректное слово, используя \nтолько буквы русского алфавита.\n')
 
         self.__letters_used = [False] * len(self.__word)
 
