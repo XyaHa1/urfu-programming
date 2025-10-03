@@ -45,11 +45,18 @@ class Calculator:
     def __parse_number(self, start: int, length: int) -> Tuple[str, int]:
             i = start
             exp = self.__expression
-            while i < length and exp[i].isdigit():
+            count_dote = 0
+            while i < length:
                 if exp[i].isdigit():
+                    i += 1
+                elif i - 1 >= 0 and exp[i] == '.':
+                    count_dote += 1
                     i += 1
                 else:
                     break
+
+                if count_dote > 1:
+                    ValueError(f"Excess point: pos = {i}")
 
             return exp[start:i], i - 1
 
@@ -86,6 +93,28 @@ class Calculator:
         return arr
 
 
+    @staticmethod
+    def __str_to_float(number: str) -> float:
+        try:
+            return float(number)
+        except(ValueError, TypeError) as e:
+            print(f'{e}: Incorrect number {number}')
+
+
+    @staticmethod
+    def __is_number(s: str) -> bool:
+        count_dote = 1
+        for ch in s:
+            if ch == '.':
+                if count_dote == 0:
+                    return False
+                else:
+                    count_dote -= 1
+            elif not ch.isdigit():
+                return False
+
+        return True
+
     def __parse_expression(self):
         ops: deque = deque()
         numbers: deque = deque()
@@ -103,8 +132,8 @@ class Calculator:
                 self.__pos += 1
                 continue
 
-            if t.isdigit():
-                num = float(t)
+            if self.__is_number(t):
+                num = self.__str_to_float(t)
                 if unary_minus:
                     num = -num
                     unary_minus = False
@@ -154,9 +183,14 @@ class Calculator:
 
 if __name__ == '__main__':
     c = Calculator()
-    print(c.eval('( ( 1    +   2   *  '
+    assert c.eval('( ( 1    +   2   *  '
                  '  (  3    / (9 *    7 - (98 / 12 -6    )    ) *    4   ) / 7 '
                  '- 5 * 6 + (6 - 7 * (10 + (8 / (6 '
                  '- - 4 )  )   )- 8) '
-                 '   ))  '))
-    print(c.eval('2 - 3 + 4'))
+                 '   ))  ') == -106.54363992172212
+    assert c.eval('8 - (-3.5 * 2 + 9) + 4') == 10
+    assert c.eval('( ( 1    +   2   *  '
+                 '  (  3    / (-9.123 *    7 - (98 / 12 -0.5678    )    ) *    4   ) / 7 '
+                 '- 5 * 6 + (6 - 7 * (10.54 + (8 / (6 '
+                 '- - 4 )  )   )- 8) '
+                 '   ))  ') == -110.42797897881007
