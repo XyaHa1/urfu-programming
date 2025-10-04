@@ -8,7 +8,13 @@ def generate_password():
     password += [random.choice(string.digits) for _ in range(3)]
     password += [random.choice("?#$%&*") for _ in range(2)]
 
-    return ''.join([random.choice(password) for _ in range(8)])
+    res = []
+    for _ in range(len(password)):
+        s = random.choice(password)
+        password.remove(s)
+        res.append(s)
+
+    return ''.join(res)
 
 
 if __name__ == '__main__':
