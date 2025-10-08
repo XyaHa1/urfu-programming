@@ -73,7 +73,6 @@ class Balance:
         if Validator.valid_amount(amount):
             if self._balance < amount:
                 print(Message.TRANSFER_ERROR.value)
-                raise ValueError
             else:
                 print(Message.WITHDRAW.value.format(amount))
                 self._balance -= amount
@@ -106,7 +105,7 @@ class UserBank:
         self.__initial_account()
 
     # Проверка баланса
-    def check_balance(self): # Проверка баланса
+    def check_balance(self):
         print(self._current_account.balance)
 
     # Пополнение счета
@@ -115,7 +114,7 @@ class UserBank:
             self._current_account.balance += amount
 
     # Списание со счета
-    def withdraw(self, amount: float): # Списание со счета
+    def withdraw(self, amount: float):
         if Validator.valid_amount(amount):
             self._current_account.balance -= amount
 
@@ -123,6 +122,7 @@ class UserBank:
     def __check_transfer(self, account: int) -> bool:
         if account in self._accounts:
             return True
+
         print(Message.INVALID_ACCOUNT.value.format(account))
         return False
 
@@ -145,13 +145,11 @@ class UserBank:
         if Validator.valid_account(first_account) and Validator.valid_account(second_account):
             if self.__check_transfer(first_account) and self.__check_transfer(second_account):
                 if Validator.valid_amount(amount):
-                    try:
-                        self._accounts[first_account].balance -= amount
-                        self._accounts[second_account].balance += amount
-                        print(Message.TRANSFER_INTO.value)
-                        print(Message.TRANSFER_INFO.value.format(first_account, amount, second_account))
-                    except ValueError:
-                        pass
+                    self._accounts[first_account].balance -= amount
+                    self._accounts[second_account].balance += amount
+                    print(Message.TRANSFER_INTO.value)
+                    print(Message.TRANSFER_INFO.value.format(first_account, amount, second_account))
+
         else:
             print(Message.INVALID_ACCOUNT.value)
 
@@ -170,10 +168,12 @@ class UserBank:
     # Создание уникального счета
     def create_account_id(self) -> int:
         account_id = random.randint(10000, 99999)
+
         while account_id in self._accounts: # Проверка на уникальность
             account_id = random.randint(10000, 99999)
         self._accounts[account_id] = Account(account_id)
         print(Message.CREATE_ACCOUNT.value.format(account_id))
+
         return account_id
 
     # Инициализация первичного счета
