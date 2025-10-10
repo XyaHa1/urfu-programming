@@ -15,7 +15,7 @@ class InvalidTypeError(Exception):
     pass
 
 
-class TransferError(Exception):
+class WithdrawError(Exception):
     pass
 
 
@@ -29,7 +29,7 @@ class Message(Enum):
     INVALID_ACCOUNT = "[WARNING] Недопустимый номер счета: #{}"
     INVALID_AMOUNT = "[ERROR] Минимальная сумма: сумма > 0"
     INVALID_TYPE = "[ERROR] Недопустимый тип данных"
-    TRANSFER_ERROR = "[WARNING] Недостаточно средств на счете"
+    WITHDRAW_ERROR = "[WARNING] Недостаточно средств на счете"
     TRANSFER_INTO = "======= Перевод между счетами ======="
     TRANSFER_OUT = "======= Перевод ======="
     TRANSFER_INFO = (
@@ -73,7 +73,7 @@ class Balance:
         return self._balance < other
 
     @property
-    def balance(self) -> float:
+    def balance(self) -> Amount:
         return self._balance
 
 
@@ -96,21 +96,19 @@ class Validator:
     # Проверка на валидность суммы
     @staticmethod
     def valid_amount(amount: Amount):
-        if not isinstance(amount, Amount):
+        if not isinstance(amount, (float, int)):
             raise InvalidTypeError(Message.INVALID_TYPE.value)
 
         if amount <= 0:
             raise InvalidAmountError(Message.INVALID_AMOUNT.value)
 
-    # Проверка на валидность перевода
+    # Проверка на валидность суммы для списания со счета
     @staticmethod
-    def valid_transfer(amount: Amount, balance: "Balance"):
-        if not isinstance(amount, Amount):
-            raise InvalidTypeError(Message.INVALID_TYPE.value)
-
+    def valid_withdraw(amount: Amount, balance: "Balance"):
         if balance < amount:
-            raise TransferError(Message.TRANSFER_ERROR.value)
+            raise WithdrawError(Message.WITHDRAW_ERROR.value)
 
+    # Проверка на существование счета
     @staticmethod
     def valid_exist_account(account: int, accounts: Dict[int, Account]):
         if account not in accounts:
@@ -131,7 +129,9 @@ class UserBank:
     # Пополнение счета
     def deposit(self, amount: Amount):
         try:
+            # Проверка на валидность суммы
             Validator.valid_amount(amount)
+
             self._current_account.balance += amount
             print(Message.DEPOSIT.value.format(amount))
         except (InvalidAmountError, InvalidTypeError) as e:
@@ -140,78 +140,58 @@ class UserBank:
     # Списание со счета
     def withdraw(self, amount: Amount):
         try:
+            # Проверка на валидность суммы
             Validator.valid_amount(amount)
-            Validator.valid_transfer(amount, self._current_account.balance)
+            # Проверка на валидность суммы для списания со счета
+            Validator.valid_withdraw(amount, self._current_account.balance)
+
             self._current_account.balance -= amount
             print(Message.WITHDRAW.value.format(amount))
-        except (InvalidAmountError, InvalidTypeError, TransferError) as e:
+        except (InvalidAmountError, InvalidTypeError, WithdrawError) as e:
             print(e)
 
-    # Перевод на чужой счет
+    # Имитация перевода на внешний счет
     def out_transfer(self, account: int, other_account: int, amount: Amount):
         try:
+            # Проверка на валидность счета
             Validator.valid_account(account)
-            Validator.valid_account(other_account)
-        except (InvalidAccountError, InvalidTypeError) as e:
-            print(e)
-            return
-
-        try:
+            # Проверка на существование счета в личном кабинете
             Validator.valid_exist_account(account, self._accounts)
             # TODO: Проверка на существование внешнего счета
-        except InvalidAccountError as e:
-            print(e)
-            return
-
-        try:
-            Validator.valid_transfer(amount, self._accounts[account].balance)
-        except (TransferError, InvalidTypeError) as e:
-            print(e)
-            return
-
-        try:
+            # Проверка на валидность суммы
             Validator.valid_amount(amount)
-        except (InvalidAmountError, InvalidTypeError) as e:
-            print(e)
-            return
+            # Проверка на валидность суммы для списания со счета
+            Validator.valid_withdraw(amount, self._accounts[account].balance)
 
-        self._accounts[account].balance -= amount
-        # TODO: Передача средств на внешний счет
-        print(Message.TRANSFER_OUT.value)
-        print(Message.TRANSFER_INFO.value.format(account, amount, other_account))
+            self._accounts[account].balance -= amount
+            # TODO: Передача средств на внешний счет
+
+            print(Message.TRANSFER_OUT.value)
+            print(Message.TRANSFER_INFO.value.format(account, amount, other_account))
+        except (InvalidAccountError, InvalidTypeError, WithdrawError) as e:
+            print(e)
 
     # Перевод между своими счетами
     def into_transfer(self, first_account: int, second_account: int, amount: Amount):
         try:
+            # Проверка на валидность счетов
             Validator.valid_account(first_account)
             Validator.valid_account(second_account)
-        except (InvalidAccountError, InvalidTypeError) as e:
-            print(e)
-            return
-
-        try:
+            # Проверка на существование счетов в личном кабинете
             Validator.valid_exist_account(first_account, self._accounts)
             Validator.valid_exist_account(second_account, self._accounts)
-        except (InvalidAccountError, InvalidTypeError) as e:
-            print(e)
-            return
-
-        try:
-            Validator.valid_transfer(amount, self._accounts[first_account].balance)
-        except TransferError as e:
-            print(e)
-            return
-
-        try:
+            # Проверка на валидность суммы
             Validator.valid_amount(amount)
-        except (InvalidAmountError, InvalidTypeError) as e:
-            print(e)
-            return
+            # Проверка на валидность суммы для списания со счета
+            Validator.valid_withdraw(amount, self._accounts[first_account].balance)
 
-        self._accounts[first_account].balance -= amount
-        self._accounts[second_account].balance += amount
-        print(Message.TRANSFER_INTO.value)
-        print(Message.TRANSFER_INFO.value.format(first_account, amount, second_account))
+            self._accounts[first_account].balance -= amount
+            self._accounts[second_account].balance += amount
+
+            print(Message.TRANSFER_INTO.value)
+            print(Message.TRANSFER_INFO.value.format(first_account, amount, second_account))
+        except (InvalidAccountError, InvalidAmountError, InvalidTypeError, WithdrawError) as e:
+            print(e)
 
     # Вывод текущего счета
     def display_current_account(self):
@@ -230,8 +210,11 @@ class UserBank:
     # Выбор счета
     def select_account(self, account: int):
         try:
+            # Проверка на валидность счета
             Validator.valid_account(account)
+            # Проверка на существование счета в личном кабинете
             Validator.valid_exist_account(account, self._accounts)
+
             self._current_account = self._accounts[account]
             print(Message.ACCOUNT_SELECT.value.format(account))
         except (InvalidAccountError, InvalidTypeError) as e:
@@ -239,10 +222,11 @@ class UserBank:
 
     # Создание уникального счета
     def create_account_id(self) -> int:
-        account_id = random.randint(10000, 99999)
+        account_id = random.randint(MIN_ACCOUNT_ID, MAX_ACCOUNT_ID)
 
-        while account_id in self._accounts:  # Проверка на уникальность
-            account_id = random.randint(10000, 99999)
+        # Гарантируем уникальность счета
+        while account_id in self._accounts:
+            account_id = random.randint(MIN_ACCOUNT_ID, MAX_ACCOUNT_ID)
         self._accounts[account_id] = Account(account_id)
         print(Message.ACCOUNT_CREATE.value.format(account_id))
 
