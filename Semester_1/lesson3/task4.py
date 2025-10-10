@@ -1,6 +1,27 @@
 import random
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
+
+class InvalidAccountError(Exception):
+    pass
+
+
+class InvalidAmountError(Exception):
+    pass
+
+
+class InvalidTypeError(Exception):
+    pass
+
+
+class TransferError(Exception):
+    pass
+
+
+MIN_ACCOUNT_ID = 10000
+MAX_ACCOUNT_ID = 99999
+
+Amount = Union[float, int]
 
 
 class Message(Enum):
@@ -24,72 +45,19 @@ class Message(Enum):
     VIEW_BALANCE = "[I] Баланс счета: {} рублей"
 
 
-class Validator:
-    @staticmethod
-    def valid_type_account(account) -> bool:
-        if not isinstance(account, int):
-            print(Message.INVALID_TYPE.value)
-            return False
-
-        return True
-
-    # Проверка на валидность счета
-    @staticmethod
-    def valid_account(account: int) -> bool:
-        if not Validator.valid_type_account(account):
-            print(Message.INVALID_TYPE.value)
-            return False
-        if not (10000 <= account <= 99999):
-            print(Message.INVALID_ACCOUNT.value.format(account))
-            return False
-
-        return True
-
-    # Проверка на не отрицательность суммы
-    @staticmethod
-    def valid_positive_amount(amount: float) -> bool:
-        return Validator.valid_type_amount(amount) and amount > 0
-
-    @staticmethod
-    def valid_type_amount(amount) -> bool:
-        return isinstance(amount, (float, int))
-
-    # Проверка на валидность суммы
-    @staticmethod
-    def valid_amount(amount: float) -> bool:
-        if not Validator.valid_type_amount(amount):
-            print(Message.INVALID_TYPE.value)
-            return False
-
-        if not Validator.valid_positive_amount(amount):
-            print(Message.INVALID_AMOUNT.value)
-            return False
-
-        return True
-
-
 class Balance:
-    def __init__(self, balance: float = 0):
-        self._balance: float = balance
+    def __init__(self, balance: Amount=0):
+        self._balance: Amount = balance
 
     def __str__(self) -> str:
         return Message.VIEW_BALANCE.value.format(self._balance)
 
-    def __iadd__(self, amount) -> "Balance":
-        if Validator.valid_amount(amount):
-            print(Message.DEPOSIT.value.format(amount))
-            self._balance += amount
-
+    def __iadd__(self, amount: Amount) -> "Balance":
+        self._balance += amount
         return self
 
-    def __isub__(self, amount) -> "Balance":
-        if Validator.valid_amount(amount):
-            if self._balance < amount:
-                print(Message.TRANSFER_ERROR.value)
-            else:
-                print(Message.WITHDRAW.value.format(amount))
-                self._balance -= amount
-
+    def __isub__(self, amount: Amount) -> "Balance":
+        self._balance -= amount
         return self
 
     def __lt__(self, other) -> bool:
@@ -109,6 +77,43 @@ class Account:
         self.balance: Balance = Balance()
 
 
+class Validator:
+    # Проверка на валидность счета
+    @staticmethod
+    def valid_account(account: int):
+        if not isinstance(account, int):
+            raise InvalidTypeError(Message.INVALID_TYPE.value)
+
+        if not (MIN_ACCOUNT_ID <= account <= MAX_ACCOUNT_ID):
+            raise InvalidAccountError(Message.INVALID_ACCOUNT.value.format(account))
+
+    # Проверка на валидность суммы
+    @staticmethod
+    def valid_amount(amount: Amount):
+        if not isinstance(amount, Amount):
+            raise InvalidTypeError(Message.INVALID_TYPE.value)
+
+        if amount <= 0:
+            raise InvalidAmountError(Message.INVALID_AMOUNT.value)
+
+    # Проверка на валидность перевода
+    @staticmethod
+    def valid_transfer(amount: Amount, balance: 'Balance'):
+        if not isinstance(amount, Amount):
+            raise InvalidTypeError(Message.INVALID_TYPE.value)
+
+        if balance < amount:
+            raise InvalidAmountError(Message.INVALID_AMOUNT.value)
+
+
+    @staticmethod
+    def valid_exist_account(account: int, accounts: Dict[int, Account]):
+        if account not in accounts:
+            raise InvalidAccountError(
+                Message.INVALID_ACCOUNT.value.format(account)
+            )
+
+
 class UserBank:
     def __init__(self, name="user"):
         self._name = name
@@ -121,15 +126,28 @@ class UserBank:
         print(self._current_account.balance)
 
     # Пополнение счета
-    def deposit(self, amount: float):
+    def deposit(self, amount: Amount):
+        try:
+            Validator.valid_amount(amount)
+        except InvalidAmountError as e:
+            print(e)
+
         self._current_account.balance += amount
+        print(Message.DEPOSIT.value.format(amount))
 
     # Списание со счета
-    def withdraw(self, amount: float):
+    def withdraw(self, amount: Amount):
+        try:
+            Validator.valid_amount(amount)
+            Validator.valid_transfer(amount, self._current_account.balance)
+        except (InvalidAmountError, TransferError) as e:
+            print(e)
+
         self._current_account.balance -= amount
+        print(Message.WITHDRAW.value.format(amount))
 
     # Проверка существования счета
-    def __check_transfer(self, account: int) -> bool:
+    def __has_account(self, account: int) -> bool:
         if account in self._accounts:
             return True
 
@@ -137,26 +155,39 @@ class UserBank:
         return False
 
     # Перевод на чужой счет
-    def out_transfer(self, account: int, other_account: int, amount: float):
-        if Validator.valid_account(account) and Validator.valid_account(other_account):
-            if self.__check_transfer(account):
-                if Validator.valid_amount(amount):
-                    self._accounts[account].balance -= amount
-                    print(Message.TRANSFER_OUT.value)
-                    print(
-                        Message.TRANSFER_INFO.value.format(
-                            account, amount, other_account
-                        )
-                    )
-        else:
-            print(Message.INVALID_ACCOUNT.value)
+    def out_transfer(self, account: int, other_account: int, amount: Amount):
+        try:
+            Validator.valid_account(account)
+            Validator.valid_account(other_account)
+        except InvalidAccountError as e:
+            print(e)
+
+        try:
+            Validator.valid_exist_account(account, self._accounts)
+            # TODO: Проверка на существование внешнего счета
+        except InvalidAccountError as e:
+            print(e)
+
+        try:
+            Validator.valid_transfer(amount, self._accounts[account].balance)
+        except TransferError as e:
+            print(e)
+
+                # if Validator.valid_amount(amount):
+                #     self._accounts[account].balance -= amount
+                #     print(Message.TRANSFER_OUT.value)
+                #     print(
+                #         Message.TRANSFER_INFO.value.format(
+                #             account, amount, other_account
+                #         )
+                #     )
 
     # Перевод между своими счетами
-    def into_transfer(self, first_account: int, second_account: int, amount: float):
+    def into_transfer(self, first_account: int, second_account: int, amount: Amount):
         if Validator.valid_account(first_account) and Validator.valid_account(
             second_account
         ):
-            if self.__check_transfer(first_account) and self.__check_transfer(
+            if self.__has_account(first_account) and self.__has_account(
                 second_account
             ):
                 if Validator.valid_amount(amount):
@@ -170,7 +201,7 @@ class UserBank:
                     )
 
     # Визуализация всех счетов
-    def show_accounts(self):
+    def display_accounts(self):
         print(Message.ACCOUNT_INFO_TITLE.value)
         for account in self._accounts:
             print(
@@ -182,7 +213,7 @@ class UserBank:
 
     # Выбор счета
     def select_account(self, account: int):
-        if self.__check_transfer(account):
+        if self.__has_account(account):
             self._current_account = self._accounts[account]
 
     # Создание уникального счета
@@ -257,11 +288,11 @@ def main():
         elif n == 4:
             user.check_balance()
         elif n == 5:
-            user.show_accounts()
+            user.display_accounts()
         elif n == 6:
             user.create_account_id()
         elif n == 7:
-            user.show_accounts()
+            user.display_accounts()
             user.select_account(select_point("[>] Введите номер счета: "))
         elif n == 0:
             exit(0)
