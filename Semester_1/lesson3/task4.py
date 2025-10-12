@@ -281,13 +281,14 @@ if __name__ == "__main__":
         print(
             f"========== Меню ==========\n"
             f"1. Пополнение счета\n"
-            f"2. Перевод между своими счетами\n"
-            f"3. Перевод \n"
-            f"4. Проверка баланса\n"
-            f"5. Показать счета\n"
-            f"6. Создать счет\n"
-            f"7. Выбрать счет\n"
-            f"8. Текущий счет\n"
+            f"2. Списание с текущего счёта\n"
+            f"3. Перевод между своими счетами\n"
+            f"4. Перевод \n"
+            f"5. Проверка баланса\n"
+            f"6. Показать счета\n"
+            f"7. Создать счет\n"
+            f"8. Выбрать счет\n"
+            f"9. Текущий счет\n"
             f"0. Выход\n"
         )
 
@@ -299,27 +300,29 @@ if __name__ == "__main__":
             if n == 1:
                 user.deposit(input_amount("[>] Введите сумму: "))
             elif n == 2:
+                user.withdraw(input_amount("[>] Введите сумму: "))
+            elif n == 3:
                 user.into_transfer(
                     select_point("[>] Введите номер первого счёта: "),
                     select_point("[>] Введите номер второго счёта: "),
                     input_amount("[>] Введите сумму перевода: "),
                 )
-            elif n == 3:
+            elif n == 4:
                 user.out_transfer(
                     select_point("[>] Введите номер счета списания: "),
                     select_point("[>] Введите номер счета получателя: "),
                     input_amount("[>] Введите сумму перевода: "),
                 )
-            elif n == 4:
-                user.check_balance()
             elif n == 5:
-                user.display_accounts()
+                user.check_balance()
             elif n == 6:
-                user.create_account_id()
+                user.display_accounts()
             elif n == 7:
+                user.create_account_id()
+            elif n == 8:
                 user.display_accounts()
                 user.select_account(select_point("[>] Введите номер счета: "))
-            elif n == 8:
+            elif n == 9:
                 user.display_current_account()
             elif n == 0:
                 exit(0)
