@@ -1,5 +1,5 @@
 from datetime import datetime
-from .exceptions import DateFormatError, CountItemsError, AmountError
+from .exceptions import DateFormatError, CountItemsError, AmountError, InvalidSeparator
 from ._config import DATE_FORMAT
 from decimal import Decimal, InvalidOperation
 
@@ -35,6 +35,13 @@ class Validator:
             datetime.strptime(date_str, DATE_FORMAT)
         except ValueError:
             raise DateFormatError()
+
+    @staticmethod
+    def valid_separator(s: str):
+        invalid_separators = [';', '|', '/', '\\', ':', '~']
+        if any(sep in s for sep in invalid_separators):
+            raise InvalidSeparator()
+
 
     @staticmethod
     def valid_count_items(items: str):

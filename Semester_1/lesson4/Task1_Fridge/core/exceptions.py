@@ -8,3 +8,6 @@ class CountItemsError(Exception):
 
 class AmountError(Exception):
     pass
+
+class InvalidSeparator(Exception):
+    pass
