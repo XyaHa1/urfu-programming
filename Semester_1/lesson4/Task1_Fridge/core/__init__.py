@@ -7,6 +7,7 @@ from .exceptions import (
     InvalidCharsTitle,
 )
 from .fridge import Fridge
+from .models import Title
 from .validators import Validator
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "AmountError",
     "InvalidSeparator",
     "InvalidCharsTitle",
+    "Title",
 ]
