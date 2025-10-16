@@ -7,7 +7,7 @@ from .exceptions import (
     InvalidCharsTitle,
 )
 from .fridge import Fridge
-from .models import Title
+from .models import Title, Product
 from .validators import Validator
 
 __all__ = [
@@ -20,4 +20,5 @@ __all__ = [
     "InvalidSeparator",
     "InvalidCharsTitle",
     "Title",
+    "Product",
 ]

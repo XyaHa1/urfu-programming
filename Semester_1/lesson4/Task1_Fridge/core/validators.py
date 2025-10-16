@@ -48,6 +48,8 @@ class Validator:
 
     @staticmethod
     def valid_date(date_str: str | None):
+        if date_str is None:
+            return
         try:
             datetime.strptime(date_str, DATE_FORMAT)
         except ValueError:
