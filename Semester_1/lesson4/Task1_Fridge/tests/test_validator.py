@@ -23,7 +23,7 @@ class TestValidator:
         with pytest.raises(AmountError):
             Validator.valid_amount(invalid)
 
-    @pytest.mark.parametrize("valid", ["2023-07-11", "2023-12-01", "2025-03-01"])
+    @pytest.mark.parametrize("valid", ["2023-07-11", "2023-12-01", "2025-03-01", None])
     def test_valid_date(self, valid):
         Validator.valid_date(valid)
 
