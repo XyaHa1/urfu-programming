@@ -16,6 +16,14 @@ class Title:
     def title(self):
         return self._title
 
+    def __to_format(self, title):
+        return " ".join(
+            item.capitalize()
+            for item in " ".join(title.strip().lower().split(" "))
+            .replace(" - ", "-")
+            .split(" ")
+        )
+
 
 class Amount:
     def __init__(self, amount: str):
