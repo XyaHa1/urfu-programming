@@ -17,12 +17,16 @@ class Title:
         return self._title
 
     def __to_format(self, title):
-        return " ".join(
-            item.capitalize()
-            for item in " ".join(title.strip().lower().split(" "))
+        normalized = title.lower().split(" ")
+        normalized = [item.strip() for item in normalized if len(item.strip()) != 0]
+        normalized = (
+            " ".join(normalized)
             .replace(" - ", "-")
+            .replace("- ", "-")
+            .replace(" -", "-")
             .split(" ")
         )
+        return " ".join(item.capitalize() for item in normalized)
 
 
 class Amount:
