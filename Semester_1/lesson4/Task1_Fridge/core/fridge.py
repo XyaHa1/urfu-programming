@@ -1,10 +1,6 @@
-from datetime import date, datetime
-from dataclasses import dataclass
-from decimal import Decimal
-from typing import Dict, Union
 from .exceptions import *
+from .models import *
 from .validators import Validator
-from ._config import DATE_FORMAT
 
 
 # goods = {
@@ -19,47 +15,51 @@ from ._config import DATE_FORMAT
 #     ],
 # }
 
-expiration_date_type = Union[None, date]
-
-@dataclass
-class Product:
-    name: str
-    amount: Decimal
-    expiration_date: expiration_date_type
-
 
 class Fridge:
-    def __init__(self, goods: Dict = dict()):
+    def __init__(self, goods=None):
+        if goods is None:
+            goods = dict()
         self._goods = goods
 
-
     def _add(self, product: Product):
-        name = product.name
-        amount = product.amount
-        expiration_date = product.expiration_date
-        if name in self._goods:
-            self._goods[name].append({'amount': amount, 'expiration_date': expiration_date})
+        title = product.title.get()
+        amount = product.amount.get()
+        expiration_date = product.expiration_date.get()
+
+        if title in self._goods:
+            self._goods[title].append(
+                {"amount": amount, "expiration_date": expiration_date}
+            )
         else:
-            self._goods[name] = [{'amount': amount, 'expiration_date': expiration_date}]
+            self._goods[title] = [
+                {"amount": amount, "expiration_date": expiration_date}
+            ]
 
     def add_by_note(self, note):
         try:
-            Validator.valid_count_items(note.strip())
-            items = note.split(',')
+            Validator.valid_separator(note)
+            Validator.valid_count_items(note)
+            items = note.split(",")
 
-            title = items[0].strip()
+            Validator.valid_title(items[0])
+            title = Title(items[0])
 
-            amount = items[1].strip()
-            Validator.valid_amount(amount)
-            amount = Decimal(amount)
+            Validator.valid_amount(items[1])
+            amount = Amount(items[1])
 
             expiration_date = None
-            if len(items) > 2 and items[2] != '':
+            if len(items) > 2 and items[2] != "":
                 expiration_date = items[2].strip()
-                Validator.valid_date(expiration_date)
-                expiration_date = datetime.strptime(expiration_date, DATE_FORMAT).date()
+            Validator.valid_date(expiration_date)
+            expiration_date = Date(expiration_date)
 
             product = Product(title, amount, expiration_date)
             self._add(product)
-        except (CountItemsError, DateFormatError) as e:
+        except (
+                CountItemsError,
+                DateFormatError,
+                InvalidSeparator,
+                InvalidCharsTitle,
+        ) as e:
             print(e)

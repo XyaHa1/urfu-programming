@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
 
 from ._config import DATE_FORMAT
@@ -9,8 +9,8 @@ class Title:
     def __init__(self, title: str):
         self._title: str = self.__to_format(title)
 
-    def __str__(self) -> str:
-        return self.title
+    def get(self):
+        return self._title
 
     @property
     def title(self):
@@ -33,7 +33,7 @@ class Amount:
     def __init__(self, amount: str):
         self._amount: Decimal = Decimal(amount)
 
-    def __str__(self) -> Decimal:
+    def get(self):
         return self._amount
 
     @property
@@ -48,7 +48,7 @@ class Date:
         else:
             self._date = None
 
-    def __str__(self) -> date | None:
+    def get(self):
         return self._date
 
     @property
