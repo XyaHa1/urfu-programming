@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 
@@ -69,3 +69,14 @@ class ProductTable:
         for prefix in prefixes:
             result_titles.extend(self.trie.search(prefix.lower().strip()))
         return result_titles
+
+    def find_total_amount(self, titles: List[str]) -> List[Tuple[str, int]]:
+        totals_for_titles = self.df.groupby('title')['amount'].sum()
+        result_data = []
+        for title in titles:
+            if title in totals_for_titles.index:
+                result_data.append((title, totals_for_titles[title]))
+            else:
+                result_data.append((title, 0))
+
+        return result_data
