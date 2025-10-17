@@ -5,8 +5,8 @@ from ..core import (
     DateFormatError,
     AmountError,
     CountItemsError,
-    InvalidSeparator,
-    InvalidCharsTitle,
+    SeparatorError,
+    CharsTitleError,
 )
 
 
@@ -80,7 +80,7 @@ class TestValidator:
         ],
     )
     def test_invalid_separator(self, invalid):
-        with pytest.raises(InvalidSeparator):
+        with pytest.raises(SeparatorError):
             Validator.valid_separator(invalid)
 
     @pytest.mark.parametrize(
@@ -99,5 +99,5 @@ class TestValidator:
 
     @pytest.mark.parametrize("invalid", ["Кофе1н", "1арковь", "картофеля.нет"])
     def test_invalid_title(self, invalid):
-        with pytest.raises(InvalidCharsTitle):
+        with pytest.raises(CharsTitleError):
             Validator.valid_title(invalid)
