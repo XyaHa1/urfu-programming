@@ -44,3 +44,21 @@ class ProductTable:
         )
         self.df = pd.concat([self.df, new_data], ignore_index=True)
         self.trie.insert(product.title.get().lower())
+
+    def delete_items_by_title(self, title: str):
+        if self.df["title"].isin([title]).any():
+            self.df = self.df[self.df["title"] != title].reset_index(drop=True)
+            self.trie.delete(title.lower())
+        else:
+            raise TitleNotFoundError()
+
+    def delete_item_by_index(self, index: int):
+        if index >= len(self.df) or index < 0:
+            raise InvalidIndexError()
+
+        title = self.df.iloc[index]["title"]
+        count_title_items = len(self.df[self.df["title"] == title]) - 1
+        if count_title_items == 0:
+            self.trie.delete(title.lower())
+
+        self.df = self.df.drop(index).reset_index(drop=True)
