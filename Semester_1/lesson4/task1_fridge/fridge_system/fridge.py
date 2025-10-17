@@ -1,40 +1,33 @@
-from Semester_1.lesson4.task1_fridge.fridge_system.core.exceptions import *
-from Semester_1.lesson4.task1_fridge.fridge_system.core.models import *
-from Semester_1.lesson4.task1_fridge.fridge_system.core.validators import Validator
+from decimal import Decimal
+from typing import List, Dict
 
-
-# goods = {
-#     'Пельмени Универсальные': [
-#         # Первая партия продукта 'Пельмени Универсальные':
-#         {'amount': Decimal('0.5'), 'expiration_date': date(2023, 7, 15)},
-#         # Вторая партия продукта 'Пельмени Универсальные':
-#         {'amount': Decimal('2'), 'expiration_date': date(2023, 8, 1)},
-#     ],
-#     'Вода': [
-#         {'amount': Decimal('1.5'), 'expiration_date': None}
-#     ],
-# }
+from .core import (
+    CountItemsError,
+    DateFormatError,
+    SeparatorError,
+    CharsTitleError,
+    AmountError,
+    Title,
+    Amount,
+    Date,
+    Product,
+    Validator,
+)
 
 
 class Fridge:
-    def __init__(self, goods=None):
-        if goods is None:
-            goods = dict()
-        self._goods = goods
+    def __init__(self, products: Dict):
+        self._products = products
 
     def _add(self, product: Product):
         title = product.title.get()
         amount = product.amount.get()
         expiration_date = product.expiration_date.get()
-
-        if title in self._goods:
-            self._goods[title].append(
-                {"amount": amount, "expiration_date": expiration_date}
-            )
+        if title in self._products:
+            self._products[title].append({"amount": amount, "expiration_date": expiration_date})
         else:
-            self._goods[title] = [
-                {"amount": amount, "expiration_date": expiration_date}
-            ]
+            self._products[title] = [{"amount": amount, "expiration_date": expiration_date}]
+
 
     def add_by_note(self, note):
         try:
@@ -59,7 +52,30 @@ class Fridge:
         except (
                 CountItemsError,
                 DateFormatError,
-                InvalidSeparator,
-                InvalidCharsTitle,
+                SeparatorError,
+                CharsTitleError,
+                AmountError,
         ) as e:
             print(e)
+
+    def find(self, words: str):
+        words = words.split(", ")
+
+        result = []
+        for word in words:
+            for title in self._products.keys():
+                if word in title.lower():
+                    result.append(title)
+
+        return result
+
+    def amount(self, words: str) -> List:
+        titles = self.find(words)
+        result = []
+        for title in titles:
+            current_amount = Decimal('0')
+            for product in self._products[title]:
+                current_amount += product["amount"]
+            result.append((title, current_amount))
+
+        return result
