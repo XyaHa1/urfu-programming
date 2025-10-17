@@ -27,6 +27,24 @@ class TriePrefix:
             curr_root = curr_root.children[char]
         curr_root.is_end = True
 
+    def delete(self, word) -> None:
+        node = self._startswith(word)
+        if node is None:
+            raise ValueError()
+        if not node.is_end:
+            raise ValueError()
+        node.is_end = False
+        if node.children:
+            return
+
+        curr_node = node
+        while curr_node.parent is not None:
+            parent_node = curr_node.parent
+            if len(parent_node.children) > 1 or parent_node.is_end:
+                break
+            parent_node.children.pop(curr_node.char)
+            curr_node = parent_node
+
     def search(self, prefix) -> List[str]:
         node = self._startswith(prefix)
         if node is None or node.char is None:
@@ -67,7 +85,17 @@ class TriePrefix:
 
 if __name__ == "__main__":
     trie = TriePrefix([])
-    trie.insert("дерево")
-    trie.insert("деревья")
-    trie.insert("деревце")
-    print(trie.search("дер"))
+    trie.insert("кот")
+    trie.insert("кофе")
+    trie.insert("кофе с сахаром")
+    trie.insert("кофеин")
+    print("До удаления:")
+    print(trie.search("ко"))
+    print(trie.search("коф"))
+    print(trie.search("кофе"))
+    print(trie.search("кофеи"))
+    trie.delete("кофеин")
+    print("После удаления:")
+    print(trie.search("ко"))
+    print(trie.search("коф"))
+    print(trie.search("кофе"))
