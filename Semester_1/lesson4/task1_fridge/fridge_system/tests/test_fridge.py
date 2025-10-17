@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from ..core import Fridge
+from ..fridge import Fridge
 
 
 class TestFridge:

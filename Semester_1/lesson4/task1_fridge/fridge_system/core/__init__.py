@@ -6,12 +6,10 @@ from .exceptions import (
     InvalidSeparator,
     InvalidCharsTitle,
 )
-from .fridge import Fridge
 from .models import Title, Product
 from .validators import Validator
 
 __all__ = [
-    "Fridge",
     "DATE_FORMAT",
     "Validator",
     "CountItemsError",

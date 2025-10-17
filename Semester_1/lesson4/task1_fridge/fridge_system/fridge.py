@@ -1,6 +1,6 @@
-from .exceptions import *
-from .models import *
-from .validators import Validator
+from Semester_1.lesson4.task1_fridge.fridge_system.core.exceptions import *
+from Semester_1.lesson4.task1_fridge.fridge_system.core.models import *
+from Semester_1.lesson4.task1_fridge.fridge_system.core.validators import Validator
 
 
 # goods = {
