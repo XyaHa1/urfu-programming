@@ -4,6 +4,7 @@ from typing import List, Tuple
 import pandas as pd
 
 from exceptions import *
+from .messages import Messages
 from ..core import Product
 from ..trie_prefix import TriePrefix
 
@@ -23,14 +24,14 @@ class ProductTable:
 
         file_path = self._data_dir / file
         if not file_path.is_file():
-            raise FileNotFoundError()
+            raise FileNotFoundError(Messages.FILE_NOT_FOUND.value.format(file))
 
         if file.endswith(".csv"):
             self.df = pd.read_csv(file_path)
         elif file.endswith(".json"):
             self.df = pd.read_json(file_path)
         else:
-            raise InvalidFormatFileError()
+            raise InvalidFormatFileError(Messages.INVALID_FORMAT_FILE.value.format(file))
 
         self.trie = TriePrefix(self.df["title"].str.lower().tolist())
 
@@ -47,15 +48,15 @@ class ProductTable:
         self.trie.insert(product.title.get().lower())
 
     def delete_items_by_title(self, title: str):
-        if self.df["title"].isin([title]).any():
-            self.df = self.df[self.df["title"] != title].reset_index(drop=True)
-            self.trie.delete(title.lower())
-        else:
-            raise TitleNotFoundError()
+        if not self.df["title"].isin([title]).any():
+            raise TitleNotFoundError(Messages.TITLE_NOT_FOUND.value.format(title))
+
+        self.df = self.df[self.df["title"] != title].reset_index(drop=True)
+        self.trie.delete(title.lower())
 
     def delete_item_by_index(self, index: int):
         if index >= len(self.df) or index < 0:
-            raise InvalidIndexError()
+            raise InvalidIndexError(Messages.INVALID_INDEX.value.format(index))
 
         title = self.df.iloc[index]["title"]
         count_title_items = len(self.df[self.df["title"] == title]) - 1

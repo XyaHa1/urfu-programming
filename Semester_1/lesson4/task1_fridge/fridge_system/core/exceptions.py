@@ -6,7 +6,7 @@ class CountItemsError(Exception):
     pass
 
 
-class InvalidCharsTitle(Exception):
+class CharsTitleError(Exception):
     pass
 
 
@@ -14,5 +14,5 @@ class AmountError(Exception):
     pass
 
 
-class InvalidSeparator(Exception):
+class SeparatorError(Exception):
     pass
