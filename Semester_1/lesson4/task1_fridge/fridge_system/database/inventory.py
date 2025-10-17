@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -62,3 +63,9 @@ class ProductTable:
             self.trie.delete(title.lower())
 
         self.df = self.df.drop(index).reset_index(drop=True)
+
+    def find_titles(self, prefixes: List[str]):
+        result_titles = []
+        for prefix in prefixes:
+            result_titles.extend(self.trie.search(prefix.lower().strip()))
+        return result_titles
