@@ -6,8 +6,7 @@ class NodeChar:
         self.parent = None
         self.char = char
         self.children = dict()
-        self.words = set()
-
+        self.is_end = False
 
 class TriePrefix:
     def __init__(self, words: List[str]):
@@ -25,14 +24,36 @@ class TriePrefix:
                 curr_root.children[char] = NodeChar(char)
                 curr_root.children[char].parent = curr_root
             curr_root = curr_root.children[char]
-            curr_root.words.add(word)
+        curr_root.is_end = True
 
     def search(self, prefix):
         node = self._startswith(prefix)
-        if node is None:
+        if node is None or node.char is None:
             return []
+        return self._collect_words(prefix, node)
 
-        return node.words
+    def _collect_words(self, prefix, node: NodeChar):
+        words = []
+        if node.is_end:
+            words.append(prefix)
+        if not node.children:
+            return words
+
+        stack = []
+        stack.extend((prefix + node.char, node) for node in node.children.values())
+
+        while stack:
+            curr_prefix, curr_node = stack.pop()
+            if curr_node.is_end:
+                words.append(curr_prefix)
+            for child in curr_node.children.values():
+                if child:
+                    new_prefix = curr_prefix + child.char
+                    stack.append((new_prefix, child))
+
+        return words
+
+
 
     def _startswith(self, prefix) -> NodeChar | None:
         curr_root = self.root
