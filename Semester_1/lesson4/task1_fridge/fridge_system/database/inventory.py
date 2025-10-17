@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 from exceptions import *
+from ..core import Product
 from ..trie_prefix import TriePrefix
 
 
@@ -31,3 +32,15 @@ class ProductTable:
             raise InvalidFormatFileError()
 
         self.trie = TriePrefix(self.df["title"].str.lower().tolist())
+
+    def save(self, product: Product):
+        new_data = pd.DataFrame(
+            {
+                "title": [product.title.get()],
+                "amount": [product.amount.get()],
+                "expiration_date": [product.expiration_date.get()],
+            },
+            index=[0],
+        )
+        self.df = pd.concat([self.df, new_data], ignore_index=True)
+        self.trie.insert(product.title.get().lower())
