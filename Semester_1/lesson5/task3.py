@@ -14,6 +14,7 @@ class Vector:
     def x(self, value):
         if isinstance(value, (int, float)):
             self._x = value
+            return
         raise ValueError("Значение должно быть числом")
 
     @property
@@ -24,6 +25,7 @@ class Vector:
     def y(self, value):
         if isinstance(value, (int, float)):
             self._y = value
+            return
         raise ValueError("Значение должно быть числом")
 
     def __add__(self, other):
