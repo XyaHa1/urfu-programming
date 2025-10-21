@@ -1,3 +1,5 @@
-from .weapon import Weapon
+from .bladeds import Sword, Axe, Knife
+from .guns import Bow, Crossbow, Staff
 
-__all__ = ["Weapon", "Sword", "Bow"]
+__all__ = ["Sword", "Axe", "Knife",
+           "Bow", "Crossbow", "Staff"]

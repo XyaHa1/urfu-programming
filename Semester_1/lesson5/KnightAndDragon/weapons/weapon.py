@@ -1,14 +1,14 @@
-from ..characters import Character
+from abc import ABC
 
 
-class Weapon:
-    def __init__(self, name, damage, critical_chance):
+class Weapon(ABC):
+    def __init__(self, name, damage):
         self._name: str = name
         self._damage: int = damage
-        self._critical_chance = critical_chance
+
+    @property
+    def damage(self):
+        return self._damage
 
     def __str__(self):
         return self._name
-
-    def attack(self, enemy: 'Character'):
-        pass
