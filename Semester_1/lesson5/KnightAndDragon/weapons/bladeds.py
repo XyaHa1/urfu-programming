@@ -14,3 +14,8 @@ class Axe(Weapon):
 class Knife(Weapon):
     def __init__(self, name: str, damage):
         super().__init__(name, damage)
+
+
+class Spear(Weapon):
+    def __init__(self, name: str, damage):
+        super().__init__(name, damage)
