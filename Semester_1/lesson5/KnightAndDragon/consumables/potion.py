@@ -21,3 +21,13 @@ class Potion(ABC):
 
     def can_use(self) -> bool:
         return self._current_count > 0
+
+
+class HealingPotion(Potion):
+    def __init__(self, name, max_count, healing):
+        super().__init__(name, max_count, healing)
+
+
+class ManaPotion(Potion):
+    def __init__(self, name, max_count, mana):
+        super().__init__(name, max_count, mana)
