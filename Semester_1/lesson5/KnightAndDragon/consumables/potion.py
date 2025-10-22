@@ -31,3 +31,18 @@ class HealingPotion(Potion):
 class ManaPotion(Potion):
     def __init__(self, name, max_count, mana):
         super().__init__(name, max_count, mana)
+
+
+class PotionManager:
+    def __init__(self, *potions):
+        self._potions = dict(potions)
+
+    def use(self, potion_name) -> int:
+        if self._potions[potion_name].can_use():
+            return self._potions[potion_name].use()
+
+    def add(self, potion_name, count=1) -> None:
+        self._potions[potion_name].add(count)
+
+    def can_use(self, potion_name) -> bool:
+        return self._potions[potion_name].can_use()
