@@ -33,7 +33,11 @@ class Character(ABC):
 
     def take_damage(self, damage: int) -> None:
         if self._shield > 0:
-            self._shield = max(self._shield - damage / 2, 0)
+            preprocessing_damage = self._shield - damage / 2
+            if preprocessing_damage < 0:
+                normalize_damage = abs(preprocessing_damage) * 2
+                self._health = self._health - normalize_damage
+            self._shield = max(preprocessing_damage, 0)
         else:
             self._health = max(self._health - damage, 0)
 
