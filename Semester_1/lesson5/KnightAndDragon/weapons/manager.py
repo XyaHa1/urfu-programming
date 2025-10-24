@@ -23,3 +23,19 @@ class WeaponManager:
 
         self._current_weapon_name = name
         print(f"*Вы экипировали: {name}*")
+
+    def damage(self) -> float:
+        """
+        Выполняет атаку текущим оружием.
+        Выводит всё в консоль и возвращает урон.
+        """
+        weapon = self.get_current_weapon()
+        multiplier = weapon.multiplier()
+
+        if multiplier > 1.0:
+            print(f"[Критический удар!] Урон увеличен на {multiplier * 100:.0f}%!")
+
+        base = weapon.damage
+        damage = base * multiplier
+        print(f"[Урон] Вы нанесли {damage:.0f} единиц урона!")
+        return damage
