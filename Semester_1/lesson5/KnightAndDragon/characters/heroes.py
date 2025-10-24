@@ -65,6 +65,63 @@ class Knight(Hero):
         pass
 
 
+class Lumberjack(Hero):
+    def __init__(
+            self,
+            name: str,
+            max_health: int,
+            health: int,
+            shield: int,
+            weapons_manager: WeaponManager,
+            ability: Ability,
+            potions_manager: PotionManager,
+    ):
+        super().__init__(
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
+        )
+
+    def use_ability(self, enemy: 'Character') -> None:
+        pass
+
+
+class Spearman(Hero):
+    def __init__(
+            self,
+            name: str,
+            max_health: int,
+            health: int,
+            shield: int,
+            weapons_manager: WeaponManager,
+            ability: Ability,
+            potions_manager: PotionManager,
+    ):
+        super().__init__(
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
+        )
+
+    def use_ability(self, enemy: 'Character') -> None:
+        pass
+
+
+class Assassin(Hero):
+    def __init__(
+            self,
+            name: str,
+            max_health: int,
+            health: int,
+            shield: int,
+            weapons_manager: WeaponManager,
+            ability: Ability,
+            potions_manager: PotionManager,
+    ):
+        super().__init__(
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
+        )
+
+    def use_ability(self, enemy: 'Character') -> None:
+        pass
+
+
 class Wizard(Hero):
     def __init__(
             self,
@@ -97,25 +154,6 @@ class Wizard(Hero):
 
 
 class Archer(Hero):
-    def __init__(
-            self,
-            name: str,
-            max_health: int,
-            health: int,
-            shield: int,
-            weapons_manager: WeaponManager,
-            ability: Ability,
-            potions_manager: PotionManager,
-    ):
-        super().__init__(
-            name, max_health, health, shield, weapons_manager, ability, potions_manager
-        )
-
-    def use_ability(self, enemy: 'Character') -> None:
-        pass
-
-
-class Assassin(Hero):
     def __init__(
             self,
             name: str,
