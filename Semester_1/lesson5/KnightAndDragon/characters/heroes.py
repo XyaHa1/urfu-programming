@@ -1,14 +1,10 @@
-import random
 from abc import abstractmethod
-from typing import Dict, Union
 
-from .character import Character
+from character import Character
 from ..consumables import Ability
 from ..consumables import PotionManager
-from ..weapons import Weapon
+from ..weapons import WeaponManager, Weapon
 
-_HeroPotionType = Union["health"]
-_WizardPotionType = Union["health", "mana"]
 
 class Hero(Character):
     def __init__(
@@ -17,42 +13,37 @@ class Hero(Character):
             max_health: int,
             health: int,
             shield: int,
-            damage: int,
-            weapons: Dict[str, Weapon],
+            weapons_manager: WeaponManager,
             ability: Ability,
             potions_manager: PotionManager,
     ):
-        super().__init__(name, max_health, health, shield, damage)
-        self._weapons: Dict[str, Weapon] = weapons
-        # Выбираем первое оружие по умолчанию
-        self._weapon: Weapon = next(iter(weapons.values()))
+        super().__init__(name, max_health, health, shield)
+        self._weapons_manager: WeaponManager = weapons_manager
         self._ability: Ability = ability
         self._potions_manager: PotionManager = potions_manager
 
     @property
     def weapon(self) -> Weapon:
-        return self._weapon
+        return self._weapons_manager.get_current_weapon()
 
     @weapon.setter
     def weapon(self, name_weapon: str) -> None:
-        self._weapon = self._weapons.get(name_weapon, self._weapon)
+        self._weapons_manager.switch_to(name_weapon)
 
-    def attack(self, enemy: 'Character') -> int:
-        multiplier = 1
-        if random.uniform(0, 1) <= 0.2:
-            multiplier = random.uniform(1, 2)
-        enemy.take_damage((self._weapon.damage + self._damage) * multiplier)
-        return (self._weapon.damage + self._damage) * multiplier
+    def attack(self, enemy: 'Character') -> float:
+        damage = self._weapons_manager.damage()
+        enemy.take_damage(damage)
+        return damage
 
     def add_potion(self, name_potion: str, count: int = 1) -> None:
         self._potions_manager.add(name_potion, count)
 
+    def use_potion(self, name_potion) -> None:
+        self.health += self._potions_manager.use(name_potion)
+
     @abstractmethod
     def use_ability(self, enemy: 'Character') -> None:
         pass
-
-    def use_potion(self, name_potion: _HeroPotionType) -> None:
-        self.health += self._potions_manager.use(name_potion)
 
 
 class Knight(Hero):
@@ -62,13 +53,12 @@ class Knight(Hero):
             max_health: int,
             health: int,
             shield: int,
-            damage: int,
-            weapons: Dict[str, Weapon],
+            weapons_manager: WeaponManager,
             ability: Ability,
             potions_manager: PotionManager,
     ):
         super().__init__(
-            name, max_health, health, shield, damage, weapons, ability, potions_manager
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
         )
 
     def use_ability(self, enemy: 'Character') -> None:
@@ -83,13 +73,12 @@ class Wizard(Hero):
             health: int,
             mana: int,
             shield: int,
-            damage: int,
-            weapons: Dict[str, Weapon],
+            weapons_manager: WeaponManager,
             ability: Ability,
             potions_manager: PotionManager,
     ):
         super().__init__(
-            name, max_health, health, shield, damage, weapons, ability, potions_manager
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
         )
         self._mana: int = mana
 
@@ -97,18 +86,14 @@ class Wizard(Hero):
     def mana(self) -> int:
         return self._mana
 
-    @mana.setter
-    def mana(self, value: int) -> None:
-        self._mana += value
-
     def use_ability(self, enemy: 'Character') -> None:
         pass
 
-    def use_potion(self, name_potion: _WizardPotionType) -> None:
+    def use_potion(self, name_potion) -> None:
         if name_potion == "health":
             self.health += self._potions_manager.use(name_potion)
         elif name_potion == "mana":
-            self.mana += self._potions_manager.use(name_potion)
+            self._mana += self._potions_manager.use(name_potion)
 
 
 class Archer(Hero):
@@ -118,13 +103,12 @@ class Archer(Hero):
             max_health: int,
             health: int,
             shield: int,
-            damage: int,
-            weapons: Dict[str, Weapon],
+            weapons_manager: WeaponManager,
             ability: Ability,
             potions_manager: PotionManager,
     ):
         super().__init__(
-            name, max_health, health, shield, damage, weapons, ability, potions_manager
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
         )
 
     def use_ability(self, enemy: 'Character') -> None:
@@ -138,13 +122,12 @@ class Assassin(Hero):
             max_health: int,
             health: int,
             shield: int,
-            damage: int,
-            weapons: Dict[str, Weapon],
+            weapons_manager: WeaponManager,
             ability: Ability,
             potions_manager: PotionManager,
     ):
         super().__init__(
-            name, max_health, health, shield, damage, weapons, ability, potions_manager
+            name, max_health, health, shield, weapons_manager, ability, potions_manager
         )
 
     def use_ability(self, enemy: 'Character') -> None:
