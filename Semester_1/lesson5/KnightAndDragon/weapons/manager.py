@@ -22,7 +22,7 @@ class WeaponManager:
             return
 
         self._current_weapon_name = name
-        print(f"*Вы экипировали: {name}*")
+        print(f"*Я использую {name}*")
 
     def damage(self) -> float:
         """
