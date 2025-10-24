@@ -1,16 +1,15 @@
-from .weapon import Weapon
+from weapon import Weapon
 
 
 class Bow(Weapon):
-    def __init__(self, name, damage):
-        super().__init__(name, damage)
-
+    def __init__(self, name, damage, crit_chance: float):
+        super().__init__(name, damage, crit_chance)
 
 class Crossbow(Weapon):
-    def __init__(self, name, damage):
-        super().__init__(name, damage)
+    def __init__(self, name, damage, crit_chance: float):
+        super().__init__(name, damage, crit_chance)
 
 
-class Staff(Weapon):
-    def __init__(self, name, damage):
-        super().__init__(name, damage)
+class RangedStaff(Weapon):
+    def __init__(self, name, damage, crit_chance: float):
+        super().__init__(name, damage, crit_chance)
