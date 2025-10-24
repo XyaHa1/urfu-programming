@@ -20,6 +20,10 @@ class Character(ABC):
     def health(self) -> int:
         return self._health
 
+    @health.setter
+    def health(self, health: int) -> None:
+        self._health = min(self._max_health, self._health + health)
+
     @property
     def shield(self) -> int:
         return self._shield
@@ -42,9 +46,9 @@ class Character(ABC):
             self._health = max(self._health - damage, 0)
 
     @abstractmethod
-    def attack_with_weapon(self, enemy: 'Character') -> None:
+    def attack(self, enemy: 'Character') -> None:
         pass
 
     @abstractmethod
-    def attack_with_spell(self, enemy: 'Character') -> None:
+    def use_ability(self, enemy: 'Character') -> None:
         pass
