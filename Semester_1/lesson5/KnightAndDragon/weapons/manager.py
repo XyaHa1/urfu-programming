@@ -1,7 +1,7 @@
 import random
 from typing import Dict
 
-from ..weapons import Weapon
+from ..weapons.weapon import Weapon
 
 
 class WeaponManager:

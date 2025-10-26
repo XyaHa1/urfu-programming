@@ -1,4 +1,4 @@
-from ..effects import Effect
+from .effect import Effect
 
 
 class BurnEffect(Effect):

@@ -1,4 +1,4 @@
-from ..weapons import Weapon
+from ..weapons.weapon import Weapon
 
 
 class Sword(Weapon):

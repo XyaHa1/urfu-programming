@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 from typing import Dict
 
-from ..potions import Potion
+from ..potions.potion import Potion
 
 
 class PotionManager:
@@ -29,7 +29,7 @@ class PotionManager:
                         user=self._name_user, amount=potion_value
                     )
                 )
-            elif potion_name == "Зелье маны":
+            elif potion_name == "Эликсир маны":
                 pass
             return potion_value
         self._custom_print(

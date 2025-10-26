@@ -12,4 +12,8 @@ class Burning(Ability):
     def apply(self, hero: "Hero", enemy: "Character") -> None:
         self._cost -= 1
         enemy.take_damage(self._damage)
-        enemy.add_effect(BurnEffect(name=self._name, damage=self._damage, duration=self._max_cost - 1))
+        enemy.add_effect(
+            BurnEffect(
+                name=self._name, damage=self._damage, duration=self._max_cost - 1
+            )
+        )

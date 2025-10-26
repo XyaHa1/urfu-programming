@@ -1,4 +1,4 @@
-from ..potions import Potion
+from ..potions.potion import Potion
 
 
 class HealingPotion(Potion):
