@@ -1,5 +1,17 @@
-from .bladeds import Sword, Axe, Knife
-from .guns import Bow, Crossbow, Staff
+from .bladeds import Sword, Axe, Knife, Spear, MeleeStaff
+from .guns import Bow, Crossbow, RangedStaff
+from .manager import WeaponManager
+from .weapon import Weapon
 
-__all__ = ["Sword", "Axe", "Knife",
-           "Bow", "Crossbow", "Staff"]
+__all__ = [
+    "Weapon",
+    "Sword",
+    "Axe",
+    "Knife",
+    "Spear",
+    "MeleeStaff",
+    "Bow",
+    "Crossbow",
+    "RangedStaff",
+    "WeaponManager",
+]
