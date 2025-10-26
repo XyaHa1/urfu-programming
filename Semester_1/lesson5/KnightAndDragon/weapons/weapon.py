@@ -1,5 +1,5 @@
 import random
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class Weapon(ABC):
@@ -14,6 +14,10 @@ class Weapon(ABC):
     @property
     def damage(self) -> int:
         return self._damage
+
+    @abstractmethod
+    def type(self) -> str:
+        pass
 
     def multiplier(self) -> float:
         if random.uniform(0, 1) <= self._crit_chance:
