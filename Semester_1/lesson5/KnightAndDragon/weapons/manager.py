@@ -56,11 +56,16 @@ class WeaponManager:
         multiplier = weapon.multiplier()
 
         if multiplier > 1.0:
-            print(f"[Критический удар!] Урон увеличен на {multiplier * 100:.0f}%!")
+            crit_messages = [
+                "Критический УДАР! {weapon} сверкнул, как молния!",
+                "Прознающий удар! {weapon} заставил враг поверить, что {user} — не тот, кто должен быть убит!",
+                "Ярость Бога войны! Враг не ожидал такой силы!",
+                "Кровавый взрыв! Враг не ожидал от такого урона!",
+            ]
+            self._custom_print(random.choice(crit_messages).format(weapon=str(weapon), user=self._name_user))
 
         base = weapon.damage
         damage = base * multiplier
-        print(f"[Урон] Вы нанесли {damage:.0f} единиц урона!")
         if weapon.type() == "melee":
             self._custom_print(
                 random.choice(self.NARRATOR_MELEE_PHRASES).format(
