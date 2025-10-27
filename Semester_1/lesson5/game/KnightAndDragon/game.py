@@ -136,6 +136,14 @@ def ending_heroic_victory(hero, dragon):
     custom_output("\n🎖️КОНЕЦ: НЕПОБЕДИМЫЙ ГЕРОЙ")
 
 
+def ending_cursed_victory(hero, dragon):
+    custom_output(f"\n💀{str(hero)} стоит над телом {str(dragon)}... но что-то не так.")
+    custom_output("Из ран дракона поднимается чёрный дым и впивается в героя.")
+    custom_output("Боль в его собственных ранах становится невыносимой — кровь течёт сильнее.")
+    custom_output("Он победил... но теперь носит в проклятье Богов.")
+    custom_output("\n👁️КОНЕЦ: ПОБЕДИТЕЛЬ СТАЛ ПРЕКЛЯТЫМ")
+
+
 def ending_pyrhic_victory(hero, dragon):
     custom_output(f"\n🩸{str(hero)} падает на колени рядом с телом {str(dragon)}!")
     custom_output("Рана на боку кровоточит, доспехи в пыли и крови...")
@@ -172,7 +180,10 @@ def battle_loop(hero, dragon, enemy_manager):
         dragon.process_effect(hero)
 
         if not dragon.is_alive():
-            if hero.health <= 50:
+            has_hero_effect = any(str(effect) == "Огненное пламя" for effect in hero._active_effect)
+            if has_hero_effect:
+                ending_cursed_victory(hero, dragon)
+            elif hero.health >= hero.max_health * 0.5:
                 ending_pyrhic_victory(hero, dragon)
             else:
                 ending_heroic_victory(hero, dragon)
