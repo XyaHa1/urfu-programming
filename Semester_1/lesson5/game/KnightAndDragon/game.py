@@ -129,6 +129,30 @@ def player_turn(hero):
             print("*Введите 1, 2, 3 или 4.*")
 
 
+def ending_heroic_victory(hero, dragon):
+    custom_output(f"\n🌟{str(hero)} стоит над поверженным {str(dragon)}!")
+    custom_output("Его клинок не дрогнул, а сердце — не сжалось.")
+    custom_output("Деревня спасена. Песни о подвиге будут петься веками!")
+    custom_output("\n🎖️КОНЕЦ: НЕПОБЕДИМЫЙ ГЕРОЙ")
+
+
+def ending_pyrhic_victory(hero, dragon):
+    custom_output(f"\n🩸{str(hero)} падает на колени рядом с телом {str(dragon)}!")
+    custom_output("Рана на боку кровоточит, доспехи в пыли и крови...")
+    custom_output("Деревня спасена... но сможет ли герой дойти домой?")
+    custom_output("\n⚰️КОНЕЦ: ПОБЕДА ЦЕНОЙ ЖИЗНИ")
+
+
+def ending_tragic_defeat(hero, dragon):
+    custom_output(f"\n🔥{str(dragon)} взмахивает крыльями над бездыханным телом {str(hero)}.")
+    custom_output("Пламя пожирает последние следы боя.")
+    custom_output("Деревня обречена... Никто не осмелится бросить вызов дракону снова.")
+    custom_output("\n🌑КОНЕЦ: ПЛАМЯ ПОБЕДИЛО")
+
+
+
+
+
 def battle_loop(hero, dragon, enemy_manager):
     """Основной цикл боя."""
     print("⚔️ Бой начался!\n")
@@ -148,7 +172,10 @@ def battle_loop(hero, dragon, enemy_manager):
         dragon.process_effect(hero)
 
         if not dragon.is_alive():
-            print(f"🎉 {str(hero)} победил дракона!")
+            if hero.health <= 50:
+                ending_pyrhic_victory(hero, dragon)
+            else:
+                ending_heroic_victory(hero, dragon)
             break
 
         # Ход дракона
@@ -159,7 +186,7 @@ def battle_loop(hero, dragon, enemy_manager):
         dragon.process_effect()
 
         if not hero.is_alive():
-            print(f"💀 {str(hero)} пал в бою...")
+            ending_tragic_defeat(hero, dragon)
             break
 
-    print("\n🔚 Бой завершён.")
+    print("\n🔚Бой завершён.")
