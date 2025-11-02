@@ -31,7 +31,7 @@ class EffectManager:
     def __init__(self, custom_print=None):
         self._custom_print = custom_print
 
-    def on_effect(self, user, target, effect: Effect):
+    def on_effect(self, target, effect: Effect):
         msg = random.choice(
             self.MESSAGE.get(str(effect), "'{target}' получил неизвестный эффект!")
         )

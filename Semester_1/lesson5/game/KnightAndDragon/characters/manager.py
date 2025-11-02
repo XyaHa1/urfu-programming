@@ -83,7 +83,7 @@ class CharacterFactory:
             return Lumberjack(
                 "Дровосек",
                 110,
-                110,
+                135,
                 30,
                 weapon_manager,
                 ability,
@@ -118,7 +118,7 @@ class CharacterFactory:
             wizard = Wizard(
                 "Колдун",
                 90,
-                90,
+                110,
                 50,
                 20,
                 weapon_manager,
@@ -149,7 +149,7 @@ class CharacterFactory:
             return Assassin(
                 "Убийца",
                 100,
-                100,
+                130,
                 20,
                 weapon_manager,
                 ability,
@@ -181,7 +181,7 @@ class CharacterFactory:
             return Archer(
                 "Лучник",
                 100,
-                100,
+                130,
                 20,
                 weapon_manager,
                 ability,
