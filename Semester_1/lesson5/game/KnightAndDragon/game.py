@@ -177,7 +177,7 @@ def battle_loop(hero, dragon, enemy_manager):
 
         # Обработка эффектов после хода игрока
         hero.process_effect()
-        dragon.process_effect(hero)
+        dragon.process_effect()
 
         if not dragon.is_alive():
             has_hero_effect = any(str(effect) == "Огненное пламя" for effect in hero._active_effect)
