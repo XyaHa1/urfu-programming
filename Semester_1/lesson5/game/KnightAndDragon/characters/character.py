@@ -69,9 +69,9 @@ class Character(ABC):
                 return
         self._active_effect.append(effect)
 
-    def process_effect(self, enemy) -> None:
+    def process_effect(self) -> None:
         for effect in reversed(self._active_effect):
             effect.tick(self)
-            self._effect_manager.on_effect(self, enemy, effect)
+            self._effect_manager.on_effect(self, effect)
             if effect.description <= 0 and str(effect) != "Щит":
                 self._active_effect.remove(effect)
