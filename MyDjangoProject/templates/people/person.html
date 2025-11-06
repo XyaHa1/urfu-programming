@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} - Архивы Повстанческого Альянса</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #0a0a16;
+            color: #ffe81f;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(28, 28, 80, 0.8) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(40, 40, 100, 0.6) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(20, 20, 60, 0.4) 0%, transparent 50%);
+            position: relative;
+        }
+        
+        /* Анимированный звёздный фон */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 3.5rem;
+            color: #ffe81f;
+            text-shadow: 0 0 15px rgba(255, 232, 31, 0.7);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0ff;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        .character-card {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .character-image {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+            background: linear-gradient(135deg, #1a1a3a, #0a0a1a);
+            border: 2px solid #ffe81f;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 25px rgba(255, 232, 31, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-placeholder::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 232, 31, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .image-placeholder i {
+            font-size: 5rem;
+            color: #ffe81f;
+            margin-bottom: 20px;
+        }
+        
+        .character-info {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: #ffe81f;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-color: #ffe81f;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #a0a0ff;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-value {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #ffe81f;
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2a2a5a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .films-section, .vehicles-section, .starships-section {
+            margin-bottom: 40px;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .item-card {
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-color: #ffe81f;
+        }
+        
+        .item-icon {
+            font-size: 2rem;
+            color: #ffe81f;
+            margin-bottom: 10px;
+        }
+        
+        .item-title {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid #2a2a5a;
+            color: #a0a0ff;
+            font-size: 0.9rem;
+        }
+        
+        .rebel-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255, 232, 31, 0.1);
+            border: 1px solid #ffe81f;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .character-card {
+                flex-direction: column;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Звёздный фон -->
+<div class="stars" id="stars"></div>
+
+<div class="container">
+    <header>
+        <div class="logo">STAR WARS</div>
+        <div class="subtitle">АРХИВЫ ПОВСТАНЧЕСКОГО АЛЬЯНСА</div>
+    </header>
+
+    <main>
+        <div class="character-card">
+            <div class="character-image">
+                <div class="image-placeholder">
+                    <i class="fas fa-jedi"></i>
+                    <div style="margin-top: 20px; color: #a0a0ff; text-align: center;">
+                        Люк Скайуокер<br>
+                        <span style="font-size: 0.9rem;">Джедай</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="character-info">
+                <h1 class="section-title">Люк Скайуокер</h1>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">Имя</div>
+                        <div class="info-value">{{ name }}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Рост</div>
+                        <div class="info-value">{{ height }} см</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Вес</div>
+                        <div class="info-value">{{ mass }} кг</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Цвет волос</div>
+                        <div class="info-value">{{ hair_color }}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Цвет кожи</div>
+                        <div class="info-value">{{ skin_color }}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Цвет глаз</div>
+                        <div class="info-value">{{ eye_color }}</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Год рождения</div>
+                        <div class="info-value">19 ДБЯ</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Пол</div>
+                        <div class="info-value">{{ gender }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="films-section">
+            <h2 class="section-title">Фильмы</h2>
+            <div class="items-grid">
+                {% for film in films %}
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-film"></i></div>
+                    <div class="item-title">{{ film }}</div>
+                </div>
+                {% endfor %}
+                <!--                    <div class="item-card">-->
+                <!--                        <div class="item-icon"><i class="fas fa-film"></i></div>-->
+                <!--                        <div class="item-title">Эпизод V: Империя наносит ответный удар</div>-->
+                <!--                    </div>-->
+                <!--                    <div class="item-card">-->
+                <!--                        <div class="item-icon"><i class="fas fa-film"></i></div>-->
+                <!--                        <div class="item-title">Эпизод VI: Возвращение джедая</div>-->
+                <!--                    </div>-->
+                <!--                    <div class="item-card">-->
+                <!--                        <div class="item-icon"><i class="fas fa-film"></i></div>-->
+                <!--                        <div class="item-title">Эпизод I: Скрытая угроза</div>-->
+                <!--                    </div>-->
+            </div>
+        </div>
+
+        <div class="vehicles-section">
+            <h2 class="section-title">Транспортные средства</h2>
+            <div class="items-grid">
+                {% for vehicle in vehicles %}
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-motorcycle"></i></div>
+                    <div class="item-title">{{ vehicle }}</div>
+                </div>
+                {% endfor %}
+                <!--                    <div class="item-card">-->
+                <!--                        <div class="item-icon"><i class="fas fa-shuttle-van"></i></div>-->
+                <!--                        <div class="item-title">Снежный спидер</div>-->
+                <!--                    </div>-->
+            </div>
+        </div>
+
+        <div class="starships-section">
+            <h2 class="section-title">Звёздные корабли</h2>
+            <div class="items-grid">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-space-shuttle"></i></div>
+                    <div class="item-title">X-wing истребитель</div>
+                </div>
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-fighter-jet"></i></div>
+                    <div class="item-title">Имперский шаттл</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div>ПОВСТАНЧЕСКИЙ АЛЬЯНС • СЕКРЕТНЫЙ АРХИВ</div>
+        <div class="rebel-badge">ДАННЫЕ ЗАЩИЩЕНЫ</div>
+    </footer>
+</div>
+
+<script>
+    // Создание звёздного фона
+    function createStars() {
+        const starsContainer = document.getElementById('stars');
+        const starsCount = 200;
+
+        for (let i = 0; i < starsCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+
+            // Случайные позиции и размеры
+            const size = Math.random() * 3;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const delay = Math.random() * 5;
+
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${posX}%`;
+            star.style.top = `${posY}%`;
+            star.style.animationDelay = `${delay}s`;
+
+            starsContainer.appendChild(star);
+        }
+    }
+
+    // Запуск при загрузке страницы
+    document.addEventListener('DOMContentLoaded', createStars);
+
+    // Добавление интерактивности карточкам
+    document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 300);
+        });
+    });
+</script>
+</body>
+</html>
