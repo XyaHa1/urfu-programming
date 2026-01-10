@@ -85,10 +85,6 @@ class Programmer(Profession):
     def soft_skills(self):
         return self._soft_skills
 
-    def get_hard_skills_iter(self):
-        for skill in self._hard_skills:
-            yield skill
-
     def work(self):
         return "Пишет код..."
 
@@ -183,7 +179,3 @@ if __name__ == "__main__":
 
     print()
     doctor.make_vaccinations(5)
-
-    print("\nХард скиллы программиста:")
-    for skill in programmer.get_hard_skills_iter():
-        print(skill)
