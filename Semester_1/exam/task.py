@@ -86,7 +86,7 @@ class Programmer(Profession):
         return self._soft_skills
 
     def work(self):
-        return "Пишет код..."
+        return f"{self._name} пишет код..."
 
     def make_commit(self):
         return f"{self._name} сделал коммит"
@@ -179,3 +179,5 @@ if __name__ == "__main__":
 
     print()
     doctor.make_vaccinations(5)
+
+    print("\n", programmer, '\n\n', doctor)
