@@ -60,7 +60,7 @@ def search_T(m: int, n: int, d: int) -> str:
 
 def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
 
-    if not any((isinstance(num, int), isinstance(den, int), isinstance(prec, int))):
+    if not all((isinstance(num, int), isinstance(den, int), isinstance(prec, int))):
         raise ValueError()
 
     if den == 0:
@@ -100,5 +100,4 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
 
     return res
 
-
-print(rational_to_decimal(-1, 4))
+print(rational_to_decimal([], 1))
