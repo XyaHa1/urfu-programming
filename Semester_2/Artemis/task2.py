@@ -1,4 +1,10 @@
-from math import gcd
+def gcd(a: int, b: int) -> int:
+    a, b = abs(a), abs(b)
+    while b != 0:
+        a, b = b, a % b
+
+    return a
+        
 
 
 def f_2_5(q: int):
@@ -43,13 +49,11 @@ def search_T(m: int, n: int, d: int) -> str:
     res.append(digit)
     n %= d
 
-    while True:
+    while n not in rem:
         r = n
         n *= 10
         digit = str(n // d)
         n %= d
-        if n in rem:
-            break
         rem[r] = digit
         res.append(digit)
     
@@ -65,6 +69,9 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
 
     if den == 0:
         raise ValueError()
+    
+    if num == 0:
+        return "0"
 
     k = gcd(num, den)
     """
@@ -100,4 +107,4 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
 
     return res
 
-print(rational_to_decimal([], 1))
+print(rational_to_decimal(32, -4))
