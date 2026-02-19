@@ -1,9 +1,12 @@
-def is_almost_lucky(s: str) -> bool:
-    if len(s) != 6:
-        return False
+def is_almost_lucky(ticket_number: str) -> bool:
+    if not isinstance(ticket_number, str):
+        raise ValueError()
     
-    n = len(s)
-    i = int(s)
+    if len(ticket_number) != 6:
+        raise ValueError()
+    
+    n = len(ticket_number)
+    i = int(ticket_number)
 
     if i == 0 or i == 999999:
         return False

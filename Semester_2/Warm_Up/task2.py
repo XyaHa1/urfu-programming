@@ -45,7 +45,7 @@ def search_T(m: int, n: int, d: int) -> str:
     rem = {}
     n *= 10
     digit = str(n // d)
-    rem[n // 10] = digit
+    rem.add(n // 10)
     res.append(digit)
     n %= d
 
@@ -54,7 +54,7 @@ def search_T(m: int, n: int, d: int) -> str:
         n *= 10
         digit = str(n // d)
         n %= d
-        rem[r] = digit
+        rem.add(r)
         res.append(digit)
     
     res.append(")")
@@ -71,7 +71,7 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
         raise ValueError()
     
     if num == 0:
-        return "0"
+        return "0.0"
 
     k = gcd(num, den)
     """
@@ -98,6 +98,7 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
         ri = right.rfind(')')
         if li != -1 and ri == -1:
             right = f"{right[:li]}{right[li + 1:]}"
+        right += "..."
 
     
     res = ""
@@ -106,5 +107,3 @@ def rational_to_decimal(num: int, den: int, prec: int = 10) -> str:
     res += f"{left}.{right}"
 
     return res
-
-print(rational_to_decimal(32, -4))
