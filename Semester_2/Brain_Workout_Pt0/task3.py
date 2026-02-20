@@ -48,13 +48,16 @@ class BaseParser:
 class StringCompressedParser(BaseParser):
     def __init__(self, source: StringSource):
         super().__init__(source)
-        self.__can_bracket = False
         self.__last_was_char = False
 
     def validate(self) -> bool:
         try:
             while not self._is_end():
                 self.__skip_literals()
+
+                if self._is_end():
+                    return True
+                
                 self.__parse_bracket_open()
             return True
         except (ValueError, TypeError):
@@ -62,54 +65,41 @@ class StringCompressedParser(BaseParser):
 
     def __skip_literals(self):
         while not self._is_end():
-            ch: str = self._peek()
-
-            if ch == '(':
+            if self._expected('('):
                 break
-            elif ch == ')':
+            elif self._expected(')'):
                 self._error('misplaced bracket')
 
             self.__last_was_char = True
             self._take()
 
     def __parse_number_into_brackets(self):
-        ch: str = self._peek()
         if self._expected('0'):
             self._take()
-
-        elif ch.isdecimal():
+        elif self._peek().isdecimal():
             while not self._is_end() and self._peek().isdecimal():
-                    self._take()
+                self._take()
         else:
             self._error('number')
 
     def __parse_bracket_close(self):
         if self._is_end():
             raise ValueError('Unclosed bracket')
-        
         elif self._expected(')'):
             self._take()
-            self.__can_bracket = False
-
         else:
             self._error('close bracket')
 
     def __parse_bracket_open(self):
-        if not self._is_end() and self._expected('('):
+        if self._expected('('):
+            self._take()
 
             if not self.__last_was_char:
                 self._error('element expected before bracket')
-
             self.__last_was_char = False
 
-            self._take()
-
-            if self.__can_bracket:
-                self._error('no bracket')
-
             self.__parse_number_into_brackets()
-            
-            self.__can_bracket = True
+
             self.__parse_bracket_close()
     
 
